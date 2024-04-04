@@ -1,4 +1,4 @@
-ackend:
+backend:
   image: docker.io/rajcharan2002/backend:latest
   replicas: 1
   resources:
