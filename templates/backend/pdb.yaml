@@ -1,0 +1,9 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ .Release.Name }}-backend-pdb
+spec:
+  selector:
+    matchLabels:
+      app: backend
+  maxUnavailable: {{ .Values.pdb.maxUnavailable }}

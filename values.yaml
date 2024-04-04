@@ -1,0 +1,49 @@
+backend:
+  image: docker.io/rajcharan2002/backend:latest
+  replicas: 1
+  resources:
+    limits:
+      cpu: "500m"
+    requests:
+      cpu: "200m"
+  autoscaling:
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 10
+
+frontend:
+  image: docker.io/rajcharan2002/frontend:latest
+  replicas: 1
+  resources:
+    limits:
+      cpu: "500m"
+    requests:
+      cpu: "200m"
+
+configmap:
+  backend:
+    DB_ENGINE: django.db.backends.mysql
+    DB_NAME: chatapp
+    DB_USER: chatapp
+    DB_PASSWORD: cGFzc3dvcmQ=
+    DB_HOST: 192.168.57.240
+    DB_PORT: 3306
+  frontend:
+    BACKEND_SERVICE_NAME: backend-service
+    UPSTREAM: backend
+
+pdb:
+  mysql:
+    selector:
+      matchLabels:
+        app: database
+    minAvailable: 50%
+  backend:
+    maxUnavailable: 33%
+  frontend:
+    minAvailable: 33%
+
+hpa:
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70

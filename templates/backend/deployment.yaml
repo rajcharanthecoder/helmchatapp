@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-backend
+  labels:
+    app: backend
+spec:
+  replicas: {{ .Values.backend.replicas }}
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: {{ .Values.backend.image }}
+          command: ["/bin/bash", "-c", "source /app/venv/bin/activate && cd /app/fundoo && python3 manage.py migrate && /app/venv/bin/gunicorn --workers 3 --bind 0.0.0.0:8000 fundoo.wsgi:application"]
+          ports:
+            - containerPort: 8000
+              protocol: TCP
+          env:
+            - name: DB_ENGINE
+              value: django.db.backends.mysql
+            - name: DB_NAME
+              value: chatapp
+            - name: DB_USER
+              value: chatapp
+            - name: DB_HOST
+              value: database
+            - name: DB_PORT
+              value: "3306"
+            - name: DB_PASSWORD
+              value: password
+          resources:
+            limits:
+              cpu: {{ .Values.backend.resources.limits.cpu }}
+            requests:
+              cpu: {{ .Values.backend.resources.requests.cpu }}
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-group
+                    operator: In
+                    values:
+                      - frontback

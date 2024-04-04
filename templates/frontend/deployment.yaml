@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: {{ .Values.frontend.replicas }}
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: {{ .Values.frontend.image }}
+          livenessProbe:
+          tcpSocket:
+            port: 80
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              cpu: {{ .Values.frontend.resources.limits.cpu }}
+            requests:
+              cpu: {{ .Values.frontend.resources.requests.cpu }}
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/config
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-group
+                    operator: In
+                    values:
+                      - frontback
+      volumes:
+        - name: config-volume
+          configMap:
+            name: nginx-config
+            items:
+              - key: BACKEND_SERVICE_NAME
+                path: backend_service.env
