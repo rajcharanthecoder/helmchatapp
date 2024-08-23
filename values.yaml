@@ -25,7 +25,7 @@ configmap:
     DB_ENGINE: django.db.backends.mysql
     DB_NAME: chatapp
     DB_USER: chatapp
-    DB_PASSWORD: cGFzc3dvcmQ=
+    DB_PASSWORD: UmFqY2hhcmFuMjAwMiE=
     DB_HOST: 192.168.57.240
     DB_PORT: 3306
   frontend:
