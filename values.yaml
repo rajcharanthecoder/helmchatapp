@@ -26,7 +26,7 @@ configmap:
     DB_NAME: chatapp
     DB_USER: chatapp
     DB_PASSWORD: UmFqY2hhcmFuMjAwMiE=
-    DB_HOST: 192.168.57.240
+    DB_HOST: 192.28.154.19
     DB_PORT: 3306
   frontend:
     BACKEND_SERVICE_NAME: backend-service
